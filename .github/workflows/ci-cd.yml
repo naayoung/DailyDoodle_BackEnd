@@ -25,6 +25,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: "17"
+          distribution: "temurin"
 
       # 3. 프로젝트 빌드 (Maven)
       - name: Build with Maven
