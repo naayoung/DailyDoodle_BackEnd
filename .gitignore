@@ -45,3 +45,6 @@ src/main/resources/application.properties
 ### Docker ###
 .dockerignore
 docker-compose.override.yml
+
+# Ignore SSH-related files
+~/.ssh/*
