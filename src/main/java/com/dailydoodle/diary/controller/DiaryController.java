@@ -38,7 +38,7 @@ public class DiaryController {
 			@RequestParam("doodleNo") Integer doodleNo,
 			@RequestParam("diaryTagsNo") Integer diaryTagsNo){
 		
-		List<DiaryEntity> list = diaryService.getDiaryInfo(memberNo, moodNo, doodleNo, diaryTagsNo);
+		List<DiaryEntity> list = diaryService.getDiaryInfo(memberNo, moodNo, doodleNo);
 		return ResponseEntity.status(HttpStatus.OK).body(list);
 	}
 	//일부 조회
