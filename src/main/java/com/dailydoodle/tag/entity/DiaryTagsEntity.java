@@ -8,7 +8,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -26,9 +25,10 @@ public class DiaryTagsEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer diaryTagsNo;
 	
-	@OneToOne
+	@ManyToOne
 	@JoinColumn(name = "diary_no")
 	private DiaryEntity diaryEntity;
+	
 	@ManyToOne
 	@JoinColumn(name = "tag_no")
 	private TagsEntity tagsEntity;
