@@ -1,6 +1,7 @@
 package com.dailydoodle.diary.service;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,14 +10,15 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.dailydoodle.diary.dto.DiaryDetailDto;
-import com.dailydoodle.diary.dto.DiaryDto;
 import com.dailydoodle.diary.entity.DiaryEntity;
 import com.dailydoodle.diary.entity.MoodEntity;
 import com.dailydoodle.diary.repository.DiaryRepository;
+import com.dailydoodle.diary.repository.MoodRepository;
 import com.dailydoodle.doodle.entity.DiaryDoodleEntity;
-import com.dailydoodle.doodle.service.DoodleService;
+import com.dailydoodle.doodle.repository.DoodleRepository;
 import com.dailydoodle.member.entity.MemberEntity;
 import com.dailydoodle.tag.entity.DiaryTagsEntity;
+import com.dailydoodle.tag.entity.TagsEntity;
 import com.dailydoodle.tag.service.TagService;
 
 import jakarta.transaction.Transactional;
@@ -26,7 +28,8 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class DiaryServiceImpl implements DiaryService {
 	private final DiaryRepository diaryRepo;
-	private final DoodleService doodleService;
+	private final MoodRepository moodRepo;
+	private final DoodleRepository doodleRepo;
 	private final TagService tagService;
 
     //일기 리스트
@@ -61,6 +64,7 @@ public class DiaryServiceImpl implements DiaryService {
             // Doodle 정보 설정
             diaryDetailDto.setDoodleNo(diaryEntity.getDiaryDoodleEntity().getDoodleNo());
             diaryDetailDto.setDoodleSrc(diaryEntity.getDiaryDoodleEntity().getDoodleSrc());
+            diaryDetailDto.setDoodleExtension(diaryEntity.getDiaryDoodleEntity().getDoodleExtension());
             
             // Tags 정보 설정
             List<String> tags = tagService.getTagsByDiary(diaryNo);
@@ -75,34 +79,53 @@ public class DiaryServiceImpl implements DiaryService {
     //일기 등록
     @Override
     @Transactional
-    public Map<String, Object> registerDiary(DiaryDto diaryDto) {
+    public Map<String, Object> registerDiary(DiaryDetailDto diaryDetailDto) {
     	
     	// 날짜 파싱
-        Timestamp diaryDate = diaryDto.getDiaryDate();
+        Timestamp diaryDate = diaryDetailDto.getDiaryDate();
 
         // MemberEntity, MoodEntity, DiaryDoodleEntity, TagsEntity 생성
         MemberEntity memberEntity = new MemberEntity();
-        memberEntity.setMemberNo(diaryDto.getMemberNo());
 
         MoodEntity moodEntity = new MoodEntity();
-        moodEntity.setMoodNo(diaryDto.getMoodNo());
+        moodEntity.setMood(diaryDetailDto.getMood());
+        moodEntity.setImageUrl(diaryDetailDto.getImageUrl());
+        moodEntity = moodRepo.save(moodEntity);
         
         DiaryDoodleEntity doodleEntity = new DiaryDoodleEntity();
-        doodleEntity.setDoodleNo(diaryDto.getDoodleNo());
+        doodleEntity.setDoodleSrc(diaryDetailDto.getDoodleSrc());
+        doodleEntity.setDoodleExtension(diaryDetailDto.getDoodleExtension());
+        doodleEntity = doodleRepo.save(doodleEntity);
         
-        DiaryTagsEntity tagsEntity = new DiaryTagsEntity();
-        tagsEntity.setDiaryTagsNo(diaryDto.getDiaryTagsNo());
+        // 태그는 3개
+        List<DiaryTagsEntity> tagsEntities = new ArrayList<>();
+        for (Integer tagNo : diaryDetailDto.getTagsNo()) {
+        	Optional<TagsEntity> optionalTagsEntity = tagService.getTagById(tagNo);
+        	
+            // 값이 존재하면 태그를 연결
+            if (optionalTagsEntity.isPresent()) {
+                TagsEntity tagsEntity = optionalTagsEntity.get();  // Optional에서 값 꺼내기
+
+                DiaryTagsEntity diaryTagsEntity = new DiaryTagsEntity();
+                diaryTagsEntity.setTagsEntity(tagsEntity);  // 태그 연결
+
+                tagsEntities.add(diaryTagsEntity);  // 태그 리스트에 추가
+            } else {
+                // 태그가 존재하지 않으면 적절한 처리 (예: 예외 발생 또는 로그 출력)
+                throw new RuntimeException("태그 번호 " + tagNo + "에 해당하는 태그를 찾을 수 없습니다.");
+            }
+        }
 
         // DiaryEntity 생성
         DiaryEntity diaryEntity = new DiaryEntity();
         diaryEntity.setMemberEntity(memberEntity);
         diaryEntity.setMoodEntity(moodEntity);
         diaryEntity.setDiaryDoodleEntity(doodleEntity);
-        diaryEntity.setDiaryTagsEntity(tagsEntity);
+        diaryEntity.setDiaryTagsEntities(tagsEntities);
         
         diaryEntity.setDiaryDate(diaryDate);
-        diaryEntity.setTitle(diaryDto.getTitle());
-        diaryEntity.setContent(diaryDto.getContent());
+        diaryEntity.setTitle(diaryDetailDto.getTitle());
+        diaryEntity.setContent(diaryDetailDto.getContent());
 
         diaryRepo.save(diaryEntity);
 
@@ -115,13 +138,14 @@ public class DiaryServiceImpl implements DiaryService {
     //일기 수정
     @Override
     @Transactional
-    public void modifyDiary(DiaryDto diaryDto) {
-    	Optional<DiaryEntity> modifyDiary = diaryRepo.findById(diaryDto.getDiaryNo());
+    public void modifyDiary(DiaryDetailDto diaryDetailDto) {
+    	Optional<DiaryEntity> modifyDiary = diaryRepo.findById(diaryDetailDto.getDiaryNo());
     	
         if (modifyDiary.isPresent()) {
             DiaryEntity existingDiary = modifyDiary.get();
-            existingDiary.setTitle(diaryDto.getTitle());
-            existingDiary.setContent(diaryDto.getContent());
+            
+            existingDiary.setTitle(diaryDetailDto.getTitle());
+            existingDiary.setContent(diaryDetailDto.getContent());
             
             try {
                 diaryRepo.save(existingDiary);

@@ -27,7 +27,9 @@ public class DiaryDetailDto {
 	
 	private Integer doodleNo;
 	private String doodleSrc;
+	private String doodleExtension;
 	
 	private Integer diaryTagsNo;
+	private List<Integer> tagsNo;
 	private List<String> tags;
 }

@@ -1,6 +1,7 @@
 package com.dailydoodle.diary.entity;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -18,6 +19,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.EqualsAndHashCode;
@@ -55,6 +57,6 @@ public class DiaryEntity {
 	@JoinColumn(name = "doolde_no")
 	private DiaryDoodleEntity diaryDoodleEntity;
 	
-	@OneToOne(mappedBy = "diaryEntity", cascade = CascadeType.ALL)
-	private DiaryTagsEntity diaryTagsEntity;
+	@OneToMany(mappedBy = "diaryEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<DiaryTagsEntity> diaryTagsEntities;
 }

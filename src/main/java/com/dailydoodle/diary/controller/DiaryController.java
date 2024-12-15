@@ -51,19 +51,19 @@ public class DiaryController {
 
 	//등록
     @PostMapping("register")
-    public ResponseEntity<Map<String, Object>> getregister(@RequestBody DiaryDto diaryDto) {
-		Map<String, Object> result = diaryService.registerDiary(diaryDto);
+    public ResponseEntity<Map<String, Object>> getregister(@RequestBody DiaryDetailDto diaryDetailDto) {
+		Map<String, Object> result = diaryService.registerDiary(diaryDetailDto);
         return ResponseEntity.status(HttpStatus.OK).body(Map.of("Result", result.get("diaryNo")));
     }
 	
 	//수정
     @PutMapping("update/{diaryNo}")
     public ResponseEntity<Map<String, Object>> getmodify(
-    		@RequestBody DiaryDto diaryDto,
+    		@RequestBody DiaryDetailDto diaryDetailDto,
     		@PathVariable Integer diaryNo) {
     	
-    	diaryDto.setDiaryNo(diaryNo);
-        diaryService.modifyDiary(diaryDto);
+    	diaryDetailDto.setDiaryNo(diaryNo);
+        diaryService.modifyDiary(diaryDetailDto);
         return ResponseEntity.status(HttpStatus.OK).body(Map.of("Result", "Success"));
     }
     

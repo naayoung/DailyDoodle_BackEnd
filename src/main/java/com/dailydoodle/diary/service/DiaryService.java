@@ -13,9 +13,9 @@ public interface DiaryService {
 	//세부 내역
 	DiaryDetailDto getDiaryInfoByDate(Integer diaryNo);
     //등록
-    Map<String, Object> registerDiary(DiaryDto diaryDto);
+    Map<String, Object> registerDiary(DiaryDetailDto diaryDetailDto);
     //수정
-    void modifyDiary(DiaryDto diaryDto);
+    void modifyDiary(DiaryDetailDto diaryDetailDto);
     //삭제
     void deleteDiary(Integer diaryNo);
 }
