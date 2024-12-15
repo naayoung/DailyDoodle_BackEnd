@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.dailydoodle.diary.dto.DiaryDetailDto;
@@ -15,17 +14,21 @@ import com.dailydoodle.diary.entity.DiaryEntity;
 import com.dailydoodle.diary.entity.MoodEntity;
 import com.dailydoodle.diary.repository.DiaryRepository;
 import com.dailydoodle.doodle.entity.DiaryDoodleEntity;
+import com.dailydoodle.doodle.service.DoodleService;
 import com.dailydoodle.member.entity.MemberEntity;
 import com.dailydoodle.tag.entity.DiaryTagsEntity;
+import com.dailydoodle.tag.service.TagService;
 
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 @Service
 public class DiaryServiceImpl implements DiaryService {
+	private final DiaryRepository diaryRepo;
+	private final DoodleService doodleService;
+	private final TagService tagService;
 
-    @Autowired
-    private DiaryRepository diaryRepo;
-    
     //일기 리스트
     @Override
     public List<DiaryEntity> getDiaryInfo(Integer memberNo, Integer moodNo, Integer doodleNo,Integer diaryTagsNo) {
@@ -33,7 +36,41 @@ public class DiaryServiceImpl implements DiaryService {
     }
     
     //날짜 조건있는 일기 정보
-
+    @Override
+    public DiaryDetailDto getDiaryInfoByDate(Integer diaryNo){
+    	Optional<DiaryEntity> diaryEntityOptional = diaryRepo.findById(diaryNo);
+    	
+    	if (diaryEntityOptional.isPresent()) {
+    		DiaryEntity diaryEntity = diaryEntityOptional.get();
+    		
+            // DiaryDetailDto 생성 및 값 설정
+            DiaryDetailDto diaryDetailDto = new DiaryDetailDto();
+            diaryDetailDto.setDiaryNo(diaryNo);
+            diaryDetailDto.setDiaryDate(diaryEntity.getDiaryDate());
+            diaryDetailDto.setTitle(diaryEntity.getTitle());
+            diaryDetailDto.setContent(diaryEntity.getContent());
+            diaryDetailDto.setUpdateDate(diaryEntity.getUpdateDate());
+            
+            diaryDetailDto.setMemberNo(diaryEntity.getMemberEntity().getMemberNo());
+            
+            // Mood 정보 설정
+            diaryDetailDto.setMoodNo(diaryEntity.getMoodEntity().getMoodNo());
+            diaryDetailDto.setMood(diaryEntity.getMoodEntity().getMood());
+            diaryDetailDto.setImageUrl(diaryEntity.getMoodEntity().getImageUrl());
+            
+            // Doodle 정보 설정
+            diaryDetailDto.setDoodleNo(diaryEntity.getDiaryDoodleEntity().getDoodleNo());
+            diaryDetailDto.setDoodleSrc(diaryEntity.getDiaryDoodleEntity().getDoodleSrc());
+            
+            // Tags 정보 설정
+            List<String> tags = tagService.getTagsByDiary(diaryNo);
+            diaryDetailDto.setTags(tags);
+            
+            return diaryDetailDto;
+        } else {
+            throw new RuntimeException("해당 일기를 찾을 수 없습니다. diaryNo: "+ diaryNo);
+        }
+    }
     
     //일기 등록
     @Override

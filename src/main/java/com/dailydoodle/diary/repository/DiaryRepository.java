@@ -17,7 +17,7 @@ public interface DiaryRepository extends JpaRepository<DiaryEntity, Integer> {
             "AND d.diaryDoodleEntity.doodleNo = :doodleNo " +
             "AND d.diaryTagsEntity.diaryTagsNo = :diaryTagsNo " +
             "AND date_format(d.diaryDate,'%Y-%m-%d') = :diaryDate")
-    List<DiaryEntity> getDiaryInfoByDate(Integer memberNo, Integer moodNo, Integer doodleNo,Integer diaryTagsNo, String diaryDate);
+    List<DiaryEntity> getDiaryInfoByDate(Integer memberNo, Integer moodNo, Integer doodleNo, Integer diaryTagsNo, String diaryDate);
 	
 	//diaryNo로 정보 불러오기
 	List<DiaryEntity> findByDiaryNo(Integer diaryNo);

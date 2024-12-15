@@ -3,7 +3,6 @@ package com.dailydoodle.diary.controller;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -22,13 +21,15 @@ import com.dailydoodle.diary.dto.DiaryDto;
 import com.dailydoodle.diary.entity.DiaryEntity;
 import com.dailydoodle.diary.service.DiaryService;
 
+import lombok.RequiredArgsConstructor;
+
 @CrossOrigin(origins = {"http://localhost:3000/","http://localhost/"})
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/diary")
 public class DiaryController {
-	@Autowired
-    private DiaryService diaryService;
-	
+    private final DiaryService diaryService;  // final 키워드로 불변성 보장
+    
 	//전체 조회
 	@GetMapping("/totalList")
 	public ResponseEntity<List<DiaryEntity>> getDiaryInfo(
@@ -42,10 +43,10 @@ public class DiaryController {
 	}
 	//일부 조회
 	@GetMapping("list/{diaryNo}")
-	public ResponseEntity<List<DiaryDetailDto>> getdetail(
+	public ResponseEntity<DiaryDetailDto> getdetail(
 			@PathVariable Integer diaryNo) {
-		List<DiaryDetailDto> list = diaryService.getDiaryInfoByDate(diaryNo);
-        return ResponseEntity.status(HttpStatus.OK).body(list);
+		DiaryDetailDto diaryDetailDto = diaryService.getDiaryInfoByDate(diaryNo);
+        return ResponseEntity.status(HttpStatus.OK).body(diaryDetailDto);
 	}
 
 	//등록

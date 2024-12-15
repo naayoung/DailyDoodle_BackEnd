@@ -11,7 +11,7 @@ public interface DiaryService {
 	//전체 목록
 	List<DiaryEntity> getDiaryInfo(Integer memberNo, Integer moodNo, Integer doodleNo, Integer tagNo);
 	//세부 내역
-	List<DiaryDetailDto> getDiaryInfoByDate(Integer diaryNo);
+	DiaryDetailDto getDiaryInfoByDate(Integer diaryNo);
     //등록
     Map<String, Object> registerDiary(DiaryDto diaryDto);
     //수정
