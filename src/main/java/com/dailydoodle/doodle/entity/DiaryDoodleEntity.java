@@ -29,10 +29,9 @@ public class DiaryDoodleEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer doodleNo;
-	private String doodle_src;
+	private String doodleSrc;
 	@Column(length = 5)
-	private String doodle_extension;
-	private String doodle_div;
+	private String doodleExtension;
 	@CreationTimestamp
 	private Timestamp uploadDate;
 	
