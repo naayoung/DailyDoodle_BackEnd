@@ -34,8 +34,8 @@ public class DiaryServiceImpl implements DiaryService {
 
     //일기 리스트
     @Override
-    public List<DiaryEntity> getDiaryInfo(Integer memberNo, Integer moodNo, Integer doodleNo,Integer diaryTagsNo) {
-        return diaryRepo.findByMemberEntityMemberNoAndMoodEntityMoodNoAndDiaryDoodleEntityDoodleNoAndDiaryTagsEntityDiaryTagsNoOrderByRegisterDateDesc(memberNo, moodNo, doodleNo, diaryTagsNo);
+    public List<DiaryEntity> getDiaryInfo(Integer memberNo, Integer moodNo, Integer doodleNo) {
+        return diaryRepo.findByMemberEntityMemberNoAndMoodEntityMoodNoAndDiaryDoodleEntityDoodleNoOrderByRegisterDateDesc(memberNo, moodNo, doodleNo);
     }
     
     //날짜 조건있는 일기 정보

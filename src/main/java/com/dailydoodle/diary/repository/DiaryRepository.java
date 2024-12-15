@@ -9,7 +9,7 @@ import com.dailydoodle.diary.entity.DiaryEntity;
 
 public interface DiaryRepository extends JpaRepository<DiaryEntity, Integer> {
 	//일기 목록
-	List<DiaryEntity> findByMemberEntityMemberNoAndMoodEntityMoodNoAndDiaryDoodleEntityDoodleNoAndDiaryTagsEntityDiaryTagsNoOrderByRegisterDateDesc(Integer memberNo, Integer moodNo, Integer doodleNo, Integer diaryTagsNo);
+	List<DiaryEntity> findByMemberEntityMemberNoAndMoodEntityMoodNoAndDiaryDoodleEntityDoodleNoOrderByRegisterDateDesc(Integer memberNo, Integer moodNo, Integer doodleNo);
 	//일기 세부 목록
     @Query("SELECT d FROM DiaryEntity d " +
             "WHERE d.memberEntity.memberNo = :memberNo " +

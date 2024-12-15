@@ -9,7 +9,7 @@ import com.dailydoodle.diary.entity.DiaryEntity;
 
 public interface DiaryService {
 	//전체 목록
-	List<DiaryEntity> getDiaryInfo(Integer memberNo, Integer moodNo, Integer doodleNo, Integer tagNo);
+	List<DiaryEntity> getDiaryInfo(Integer memberNo, Integer moodNo, Integer doodleNo);
 	//세부 내역
 	DiaryDetailDto getDiaryInfoByDate(Integer diaryNo);
     //등록
